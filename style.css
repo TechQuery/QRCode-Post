@@ -1,0 +1,10 @@
+body > * {
+    vertical-align: top;
+}
+
+form {
+    display: inline-block;
+}
+form > footer {
+    text-align: center;
+}

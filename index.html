@@ -1,0 +1,30 @@
+<script src="https://cdn.bootcss.com/qrcode-generator/1.4.0/qrcode.js"></script>
+
+<form>
+    <ol>
+        <li><label>
+            Load an image
+            <input type="file" accept="image/*"
+                   name="image" required>
+        </label></li>
+        <li>
+            Select an QRCode area in the image
+            <div>
+                <input type="text" name="start" readonly
+                       placeholder="Start point">
+                <input type="text" name="end" readonly
+                       placeholder="End point">
+            </div>
+        </li>
+        <li>
+            <input type="url" name="URL" required
+                   placeholder="URL in QRCode">
+        </li>
+    </ol>
+    <footer>
+        <input type="submit" value="Generate">
+        <input type="reset" value="Reset">
+    </footer>
+</form>
+
+<canvas></canvas>
