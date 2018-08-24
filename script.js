@@ -88,7 +88,7 @@ const output = document.querySelectorAll('form [readonly]'), rect = [ ];
 
 canvas.onmousedown = event => {
     
-    output[0].value = rect[0] = coordOf( event );
+    rect[0] = output[0].value = coordOf( event );
     
     rect[1] = null;
 };
@@ -96,7 +96,7 @@ canvas.onmousedown = event => {
 canvas.onmouseup = canvas.onmouseout = event => {
     
     if (rect[0] && !rect[1])
-        output[1].value = rect[1] = coordOf( event );
+        rect[1] = output[1].value = coordOf( event );
 };
 
 // Print QRCode

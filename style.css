@@ -1,9 +1,6 @@
-body > * {
-    vertical-align: top;
-}
-
 form {
-    display: inline-block;
+    display:         inline-block;
+    vertical-align:  top;
 }
 fieldset > footer {
     text-align: center;
