@@ -1,12 +1,13 @@
 <script src="https://cdn.bootcss.com/qrcode-generator/1.4.0/qrcode.js"></script>
 
-<form>
+<form><fieldset>
+    <legend>QRCode Post</legend>
     <ol>
         <li><label>
             Load an image
             <input type="file" accept="image/*"
                    name="image" required>
-        </label></li>
+            </label></li>
         <li>
             Select an QRCode area in the image
             <div>
@@ -25,6 +26,6 @@
         <input type="submit" value="Generate">
         <input type="reset" value="Reset">
     </footer>
-</form>
+</fieldset></form>
 
 <canvas></canvas>
