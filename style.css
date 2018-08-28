@@ -2,6 +2,6 @@ form {
     display:         inline-block;
     vertical-align:  top;
 }
-fieldset > footer {
-    text-align: center;
+form footer {
+    text-align:  center;
 }

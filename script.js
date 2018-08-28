@@ -3,25 +3,25 @@
 function read(file) {
 
     const reader = new FileReader();
-    
+
     return  new Promise((resolve, reject) => {
-        
+
         reader.onload = () => resolve( reader.result );
-        
+
         reader.onerror = reject;
-        
+
         reader.readAsDataURL( file );
     });
 }
 
 function imageOf(URI) {
-    
+
     const image = new Image();
-    
+
     return  new Promise((resolve, reject) => {
-        
+
         image.onload = () => resolve( image ), image.onerror = reject;
-        
+
         image.src = URI;
     });
 }
@@ -29,7 +29,7 @@ function imageOf(URI) {
 function QRCodeOf(raw) {
 
     const code = qrcode(0, 'H');
-    
+
     code.addData( raw );
 
     code.make();
@@ -38,11 +38,11 @@ function QRCodeOf(raw) {
 }
 
 function squareOf(rect) {
-    
+
     const size = [rect[1][0] - rect[0][0],  rect[1][1] - rect[0][1]];
-    
+
     const square = [rect[0]];
-    
+
     square[1] = (
         size[0] < size[1]
     ) ? [
@@ -50,7 +50,7 @@ function squareOf(rect) {
     ] : [
         rect[0][0] + size[1],  rect[1][1]
     ];
-    
+
     return square;
 }
 
@@ -58,7 +58,7 @@ function squareOf(rect) {
 
 const canvas = document.querySelector('canvas');
 
-const context = canvas.getContext('2d'), offset = canvas.getBoundingClientRect();
+const context = canvas.getContext('2d');
 
 function drawBackground(image) {
 
@@ -68,16 +68,18 @@ function drawBackground(image) {
 }
 
 function coordOf(event) {
-    
+
     return [
-        event.clientX - offset.left,
-        event.clientY - offset.top
+        event.clientX - canvas.offsetLeft,
+        event.clientY - canvas.offsetTop
     ];
 }
 
 // Load image
 
-document.querySelector('input[type="file"]').onchange = async function () {
+const form = document.querySelector('form');
+
+form.image.onchange = async function () {
 
     drawBackground(await imageOf(await read( this.files[0] )))
 };
@@ -87,31 +89,28 @@ document.querySelector('input[type="file"]').onchange = async function () {
 const output = document.querySelectorAll('form [readonly]'), rect = [ ];
 
 canvas.onmousedown = event => {
-    
+
     rect[0] = output[0].value = coordOf( event );
-    
+
     rect[1] = null;
 };
 
 canvas.onmouseup = canvas.onmouseout = event => {
-    
+
     if (rect[0] && !rect[1])
         rect[1] = output[1].value = coordOf( event );
 };
 
 // Print QRCode
 
-const form = document.querySelector('form'),
-      input = document.querySelector('input[type="url"]');
+form.onsubmit = async function (event) {
 
-form.onsubmit = async event => {
-    
     event.preventDefault();
-    
-    const image = await imageOf( QRCodeOf( input.value ) );
-    
+
+    const image = await imageOf( QRCodeOf( this.URL.value ) );
+
     if (rect.length < 2)  return context.drawImage(image, 0, 0);
-    
+
     const square = squareOf( rect );
 
     context.drawImage(
@@ -124,8 +123,44 @@ form.onsubmit = async event => {
 };
 
 form.onreset = () => {
-    
+
     context.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     rect.length = canvas.width = canvas.height = 0;
 };
+
+// Preset parameters
+
+(async () => {
+
+    const parameter = new URLSearchParams( location.search );
+
+    const image = parameter.get('image'),
+          start = parameter.get('start'),
+          end = parameter.get('end');
+
+    if ( image ) {
+
+        drawBackground(await imageOf( image ));
+
+        form.image.disabled = true;
+    }
+
+    if ( start ) {
+
+        form.start.value = rect[0] = start.split(',');
+
+        rect[0][0] = +rect[0][0],  rect[0][1] = +rect[0][1];
+
+        form.start.disabled = true;
+    }
+
+    if ( end ) {
+
+        form.end.value = rect[1] = end.split(',');
+
+        rect[1][0] = +rect[1][0],  rect[1][1] = +rect[1][1];
+
+        form.end.disabled = true;
+    }
+})();

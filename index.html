@@ -1,31 +1,41 @@
+<script src="https://cdn.bootcss.com/babel-polyfill/6.26.0/polyfill.min.js"></script>
 <script src="https://cdn.bootcss.com/qrcode-generator/1.4.0/qrcode.js"></script>
 
-<form><fieldset>
-    <legend>QRCode Post</legend>
-    <ol>
-        <li><label>
-            Load an image
-            <input type="file" accept="image/*"
-                   name="image" required>
-            </label></li>
-        <li>
-            Select an QRCode area in the image
-            <div>
-                <input type="text" name="start" readonly
-                       placeholder="Start point">
-                <input type="text" name="end" readonly
-                       placeholder="End point">
-            </div>
-        </li>
-        <li>
-            <input type="url" name="URL" required
-                   placeholder="URL in QRCode">
-        </li>
-    </ol>
-    <footer>
-        <input type="submit" value="Generate">
-        <input type="reset" value="Reset">
-    </footer>
-</fieldset></form>
+<form>
+    <fieldset>
+        <legend>QRCode Post</legend>
+        <ol>
+            <li><label>
+                Load an image
+                <input type="file" accept="image/*"
+                       name="image" required>
+                </label></li>
+            <li>
+                Select an QRCode area in the image
+                <div>
+                    <input type="text" name="start" readonly
+                           placeholder="Start point">
+                    <input type="text" name="end" readonly
+                           placeholder="End point">
+                </div>
+            </li>
+            <li>
+                <input type="url" name="URL" required
+                       placeholder="URL in QRCode">
+            </li>
+        </ol>
+        <footer>
+            <input type="submit" value="Generate">
+            <input type="reset" value="Reset">
+        </footer>
+    </fieldset>
+    <footer><small>
+        Made by
+        <a target="_blank" href="https://codepen.io/tech_query/details/mGJzbK/">
+            TechQuery
+        </a>
+        with Love
+    </small></footer>
+</form>
 
 <canvas width="0" height="0"></canvas>
