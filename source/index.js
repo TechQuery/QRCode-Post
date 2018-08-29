@@ -2,6 +2,8 @@ import { read, imageOf, QRCodeOf, squareOf } from './utility';
 
 import Drawer from './Drawer';
 
+import DragSelector from './DragSelector';
+
 
 const drawer = new Drawer('canvas');
 
@@ -16,25 +18,18 @@ form.image.onchange = async function () {
     if ( image )
         drawer.drawBackground(await imageOf(await read( image )));
     else
-        drawer.clear();
+        drawer.clear(), form.reset();
 };
 
 // Select area
 
-const output = document.querySelectorAll('form [readonly]'), rect = [ ];
+const output = document.querySelectorAll('form [readonly]');
 
-drawer.canvas.onmousedown = event => {
-
-    rect[0] = output[0].value = drawer.coordOf( event );
-
-    rect[1] = null;
-};
-
-drawer.canvas.onmouseup = drawer.canvas.onmouseout = event => {
-
-    if (rect[0] && !rect[1])
-        rect[1] = output[1].value = drawer.coordOf( event );
-};
+const selector = new DragSelector(
+    'canvas',
+    coord  =>  output[0].value = coord,
+    coord  =>  output[1].value = coord
+);
 
 // Print QRCode
 
@@ -44,9 +39,9 @@ form.onsubmit = async function (event) {
 
     const image = await imageOf( QRCodeOf( this.URL.value ) );
 
-    if (rect.length < 2)  return drawer.draw( image );
+    if (selector.rect.length < 2)  return drawer.draw( image );
 
-    const square = squareOf( rect );
+    const square = squareOf( selector.rect );
 
     drawer.draw(
         image,
@@ -59,9 +54,7 @@ form.onsubmit = async function (event) {
 
 form.onreset = () => {
 
-    drawer.clear();
-
-    rect.length = 0;
+    drawer.clear(), selector.clear();
 
     for (let field  of  Array.from( form.elements ))  field.disabled = false;
 };
@@ -85,18 +78,14 @@ form.onreset = () => {
 
     if ( start ) {
 
-        form.start.value = rect[0] = start.split(',');
-
-        rect[0][0] = +rect[0][0],  rect[0][1] = +rect[0][1];
+        form.start.value = selector.select(0, ...start.split(','));
 
         form.start.disabled = true;
     }
 
     if ( end ) {
 
-        form.end.value = rect[1] = end.split(',');
-
-        rect[1][0] = +rect[1][0],  rect[1][1] = +rect[1][1];
+        form.end.value = selector.select(1, ...end.split(','));
 
         form.end.disabled = true;
     }

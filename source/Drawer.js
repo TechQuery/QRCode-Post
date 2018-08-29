@@ -1,11 +1,11 @@
-export default  class Drawer {
+import ElementBase from './ElementBase';
+
+
+export default  class Drawer extends ElementBase {
 
     constructor(canvas) {
 
-        this.canvas = (canvas instanceof Element)  ?
-            canvas  :  document.querySelector( canvas );
-
-        this.context = this.canvas.getContext('2d');
+        super( canvas ).context = this.root.getContext('2d');
     }
 
     draw(image, x, y, width, height) {
@@ -21,24 +21,16 @@ export default  class Drawer {
 
     drawBackground(image) {
 
-        this.canvas.width = image.naturalWidth,
-        this.canvas.height = image.naturalHeight;
+        this.root.width = image.naturalWidth,
+        this.root.height = image.naturalHeight;
 
         this.draw( image );
     }
 
-    coordOf(event) {
-
-        return [
-            event.clientX - this.canvas.offsetLeft,
-            event.clientY - this.canvas.offsetTop
-        ];
-    }
-
     clear() {
 
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.clearRect(0, 0, this.root.width, this.root.height);
 
-        this.canvas.width = this.canvas.height = 0;
+        this.root.width = this.root.height = 0;
     }
 }

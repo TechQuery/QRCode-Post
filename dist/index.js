@@ -59,11 +59,114 @@ function outPackage(name) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var _module_ = {
+    './DragSelector': {
+        base: '.',
+        dependency: [],
+        factory: function factory(require, exports, module) {
+            Object.defineProperty(exports, "__esModule", {
+                value: true
+            });
+
+            var _ElementBase = require('./ElementBase');
+
+            var _ElementBase2 = _interopRequireDefault(_ElementBase);
+
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : { default: obj };
+            }
+
+            var DragSelector = function (_ElementBase2$default) {
+                _inherits(DragSelector, _ElementBase2$default);
+
+                function DragSelector(image, onStart, onEnd) {
+                    var _this;
+
+                    _classCallCheck(this, DragSelector);
+
+                    (_this = _possibleConstructorReturn(this, (DragSelector.__proto__ || Object.getPrototypeOf(DragSelector)).call(this, image)), _this).rect = [];
+
+                    var endBack = function endBack(event) {
+
+                        if (_this.rect[0] && !_this.rect[1]) onEnd(_this.rect[1] = _this.coordOf(event));
+                    };
+
+                    _this.on('mousedown', function (event) {
+
+                        onStart(_this.rect[0] = _this.coordOf(event));
+
+                        _this.rect[1] = null;
+                    }).on('mouseup', endBack).on('mouseout', endBack);
+                    return _this;
+                }
+
+                _createClass(DragSelector, [{
+                    key: 'coordOf',
+                    value: function coordOf(event) {
+
+                        return [event.clientX - this.root.offsetLeft, event.clientY - this.root.offsetTop];
+                    }
+                }, {
+                    key: 'clear',
+                    value: function clear() {
+                        this.rect.length = 0;
+                    }
+                }, {
+                    key: 'select',
+                    value: function select(type, x, y) {
+                        return this.rect[type] = [+x, +y];
+                    }
+                }]);
+
+                return DragSelector;
+            }(_ElementBase2.default);
+
+            exports.default = DragSelector;
+        }
+    },
+    './ElementBase': {
+        base: '.',
+        dependency: [],
+        factory: function factory(require, exports, module) {
+            Object.defineProperty(exports, "__esModule", {
+                value: true
+            });
+
+            var ElementBase = function () {
+                function ElementBase(root) {
+                    _classCallCheck(this, ElementBase);
+
+                    if (this.constructor === ElementBase) throw new TypeError('"ElementBase" is an Abstract class');
+
+                    this.root = root instanceof Element ? root : document.querySelector(root);
+                }
+
+                _createClass(ElementBase, [{
+                    key: 'on',
+                    value: function on(event, handler) {
+
+                        this.root.addEventListener(event, handler);
+
+                        return this;
+                    }
+                }]);
+
+                return ElementBase;
+            }();
+
+            exports.default = ElementBase;
+        }
+    },
     './Drawer': {
         base: '.',
         dependency: [],
@@ -72,13 +175,24 @@ var _module_ = {
                 value: true
             });
 
-            var Drawer = function () {
+            var _ElementBase = require('./ElementBase');
+
+            var _ElementBase2 = _interopRequireDefault(_ElementBase);
+
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : { default: obj };
+            }
+
+            var Drawer = function (_ElementBase2$default2) {
+                _inherits(Drawer, _ElementBase2$default2);
+
                 function Drawer(canvas) {
+                    var _this2;
+
                     _classCallCheck(this, Drawer);
 
-                    this.canvas = canvas instanceof Element ? canvas : document.querySelector(canvas);
-
-                    this.context = this.canvas.getContext('2d');
+                    (_this2 = _possibleConstructorReturn(this, (Drawer.__proto__ || Object.getPrototypeOf(Drawer)).call(this, canvas)), _this2).context = _this2.root.getContext('2d');
+                    return _this2;
                 }
 
                 _createClass(Drawer, [{
@@ -91,28 +205,22 @@ var _module_ = {
                     key: 'drawBackground',
                     value: function drawBackground(image) {
 
-                        this.canvas.width = image.naturalWidth, this.canvas.height = image.naturalHeight;
+                        this.root.width = image.naturalWidth, this.root.height = image.naturalHeight;
 
                         this.draw(image);
-                    }
-                }, {
-                    key: 'coordOf',
-                    value: function coordOf(event) {
-
-                        return [event.clientX - this.canvas.offsetLeft, event.clientY - this.canvas.offsetTop];
                     }
                 }, {
                     key: 'clear',
                     value: function clear() {
 
-                        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                        this.context.clearRect(0, 0, this.root.width, this.root.height);
 
-                        this.canvas.width = this.canvas.height = 0;
+                        this.root.width = this.root.height = 0;
                     }
                 }]);
 
                 return Drawer;
-            }();
+            }(_ElementBase2.default);
 
             exports.default = Drawer;
         }
@@ -185,13 +293,17 @@ var _module_ = {
         base: '.',
         dependency: [],
         factory: function factory(require, exports, module) {
-            var _this = this;
+            var _this3 = this;
 
             var _utility = require('./utility');
 
             var _Drawer = require('./Drawer');
 
             var _Drawer2 = _interopRequireDefault(_Drawer);
+
+            var _DragSelector = require('./DragSelector');
+
+            var _DragSelector2 = _interopRequireDefault(_DragSelector);
 
             function _interopRequireDefault(obj) {
                 return obj && obj.__esModule ? obj : { default: obj };
@@ -235,7 +347,7 @@ var _module_ = {
                                 break;
 
                             case 13:
-                                drawer.clear();
+                                drawer.clear(), form.reset();
 
                             case 14:
                             case 'end':
@@ -247,20 +359,13 @@ var _module_ = {
 
             // Select area
 
-            var output = document.querySelectorAll('form [readonly]'),
-                rect = [];
+            var output = document.querySelectorAll('form [readonly]');
 
-            drawer.canvas.onmousedown = function (event) {
-
-                rect[0] = output[0].value = drawer.coordOf(event);
-
-                rect[1] = null;
-            };
-
-            drawer.canvas.onmouseup = drawer.canvas.onmouseout = function (event) {
-
-                if (rect[0] && !rect[1]) rect[1] = output[1].value = drawer.coordOf(event);
-            };
+            var selector = new _DragSelector2.default('canvas', function (coord) {
+                return output[0].value = coord;
+            }, function (coord) {
+                return output[1].value = coord;
+            });
 
             // Print QRCode
 
@@ -280,7 +385,7 @@ var _module_ = {
                                 case 3:
                                     image = _context2.sent;
 
-                                    if (!(rect.length < 2)) {
+                                    if (!(selector.rect.length < 2)) {
                                         _context2.next = 6;
                                         break;
                                     }
@@ -288,7 +393,7 @@ var _module_ = {
                                     return _context2.abrupt('return', drawer.draw(image));
 
                                 case 6:
-                                    square = (0, _utility.squareOf)(rect);
+                                    square = (0, _utility.squareOf)(selector.rect);
 
 
                                     drawer.draw(image, square[0][0], square[0][1], square[1][0] - square[0][0], square[1][1] - square[0][1]);
@@ -308,9 +413,7 @@ var _module_ = {
 
             form.onreset = function () {
 
-                drawer.clear();
-
-                rect.length = 0;
+                drawer.clear(), selector.clear();
 
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;
@@ -368,18 +471,14 @@ var _module_ = {
 
                                 if (start) {
 
-                                    form.start.value = rect[0] = start.split(',');
-
-                                    rect[0][0] = +rect[0][0], rect[0][1] = +rect[0][1];
+                                    form.start.value = selector.select.apply(selector, [0].concat(_toConsumableArray(start.split(','))));
 
                                     form.start.disabled = true;
                                 }
 
                                 if (end) {
 
-                                    form.end.value = rect[1] = end.split(',');
-
-                                    rect[1][0] = +rect[1][0], rect[1][1] = +rect[1][1];
+                                    form.end.value = selector.select.apply(selector, [1].concat(_toConsumableArray(end.split(','))));
 
                                     form.end.disabled = true;
                                 }
@@ -389,7 +488,7 @@ var _module_ = {
                                 return _context3.stop();
                         }
                     }
-                }, _callee3, _this);
+                }, _callee3, _this3);
             }))();
         }
     }
