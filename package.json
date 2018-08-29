@@ -1,0 +1,29 @@
+{
+  "name": "qrcode-post",
+  "version": "0.4.0",
+  "description": "Add QRCode into Image posts",
+  "author": "shiy2008@gmail.com",
+  "license": "AGPL-3.0",
+  "homepage": "https://techquery.github.io/QRCode-Post/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechQuery/QRCode-Post.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TechQuery/QRCode-Post/issues"
+  },
+  "browser": "dist/index.js",
+  "scripts": {
+    "build": "amd-bundle source/index dist/index",
+    "test": "npm run build  &&  web-server -o",
+    "precommit": "npm run build  &&  git add .",
+    "start": "web-server"
+  },
+  "dependencies": {
+    "koapache": "^1.0.2"
+  },
+  "devDependencies": {
+    "amd-bundle": "^1.3.2",
+    "husky": "^0.14.3"
+  }
+}
